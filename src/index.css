@@ -8,6 +8,18 @@ html, body {
     height: 100%;
 }
 
+textarea,
+textarea:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+button {
+    border: none;
+}
+
+/* ******************************************************************************************* */
+
 #container {
     width: 100%;
     height: 100%;
@@ -23,7 +35,20 @@ html, body {
     background-color: red;
 }
 
-#messageBox {
+#inputBox {
     flex: 0.3;
+
+    display: flex;
     background-color: blue;
 }
+
+#inputContent {
+    flex: 0.7;
+    background-color: blueviolet;
+}
+
+#sendButton {
+    flex: 0.3;
+    background-color: chartreuse;
+}
+
