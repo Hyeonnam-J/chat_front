@@ -15,7 +15,11 @@ const createWindow = () => {
         // 페이지가 표시되기 전 전처리
         // _dirname: 현재 실행 중인 스크립트의 경로
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            
+            // Renderer에서 require 사용 가능
+            nodeIntegration: true,
+            contextIsolation: false,
         }
     })
     
@@ -42,23 +46,3 @@ app.on('window-all-closed', () => {
     // 맥 OS가 아니면 종료.
     if(process.platform !== 'darwin') app.quit();
 });
-
-console.log('메인----------------------');
-
-const PORT = 3000;
-const HOST = '127.0.0.1';
-
-const client = new net.Socket();
-
-client.connect(PORT, HOST, () => {
-    client.write('들어가겠습니다~');
-});
-
-client.on('data', (data) => {
-    console.log('서버가 보낸 말', data.toString());
-});
-
-client.on('close', () => {
-    console.log('서버와의 연결이 끊겼습니다');
-});
-
