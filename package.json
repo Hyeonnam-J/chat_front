@@ -12,5 +12,8 @@
     "license": "ISC",
     "devDependencies": {
         "electron": "^30.0.7"
+    },
+    "dependencies": {
+        "socket.io": "^4.7.5"
     }
 }
