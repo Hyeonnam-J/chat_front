@@ -10,7 +10,7 @@ class Chat{
 
 Chat.infoType = Object.freeze({
     message: 'message',
-    entrance: 'entrance'
+    alaram: 'alaram'
 });
 
 Chat.infoOrigin = Object.freeze({
