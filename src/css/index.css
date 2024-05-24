@@ -1,0 +1,63 @@
+@import './variable.css';
+
+#container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: azure;
+}
+
+#viewBox {
+    flex: 0.7;
+
+    background-color: red;
+}
+
+.messageBox {
+    display: flex;
+
+    width: 100%;
+    height: fit-content;
+
+    padding: 10px;
+    border: 5px solid black;
+}
+
+.serverAlaram {
+    background-color: slategray;
+}
+
+.profile {
+    /* 프로필은 고정 */
+    width: var(--profile-width);
+    height: var(--profile-height);
+
+    background-color: yellowgreen;
+}
+
+.message {
+    width: calc(100% - var(--profile-width) - var(--message-space));
+    word-break: break-all;
+    background-color: cornflowerblue;
+}
+
+#inputBox {
+    flex: 0.3;
+
+    display: flex;
+    background-color: blue;
+}
+
+#inputContent {
+    flex: 0.7;
+    background-color: blueviolet;
+}
+
+#sendButton {
+    flex: 0.3;
+    background-color: chartreuse;
+}
+

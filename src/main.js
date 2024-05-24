@@ -5,8 +5,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
-const net = require('net');
-
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,

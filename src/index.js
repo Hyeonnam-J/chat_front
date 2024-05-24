@@ -1,5 +1,6 @@
 const net = require('net');
 const Chat = require('./js/chat');
+const { render } = require('./js/render');
 
 // 서버 정보
 const PORT = 3000;
@@ -27,7 +28,7 @@ client.connect(PORT, HOST, () => {
             console.log('id가 발급되었습니다: ', m_id, ' / ', obj_data.message);
         }else{
             // 그 외의 경우는 모두 메시지 목록에 저장.
-            messages.push(obj_data);
+            pushMessage(obj_data, m_id);
 
             // 화면에서 구현 후 삭제할 로직 ▽
             if(obj_data.infoType === Chat.infoType.alaram){
@@ -60,7 +61,7 @@ client.connect(PORT, HOST, () => {
         console.log('서버와의 연결이 끊겼습니다');
 
         const disconnectAlaram = new Chat(m_id, '서버와의 연결이 끊겼습니다 !', Chat.infoType.alaram, false);
-        messages.push(disconnectAlaram);
+        pushMessage(disconnectAlaram, m_id);
         console.log('메시지 수: ', messages.length);
     });
 });
@@ -72,4 +73,9 @@ function sendMessage(m_id) {
     const json_chat = JSON.stringify(obj_chat);
     client.write(json_chat);
     inputContent.value = "";
+}
+
+function pushMessage(data, m_id){
+    messages.push(data);
+    render(m_id, messages, document);
 }
