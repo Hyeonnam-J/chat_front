@@ -29,20 +29,6 @@ client.connect(PORT, HOST, () => {
         }else{
             // 그 외의 경우는 모두 메시지 목록에 저장.
             pushMessage(obj_data, m_id);
-
-            // 화면에서 구현 후 삭제할 로직 ▽
-            if(obj_data.infoType === Chat.infoType.alarm){
-                // 다른 유저의 출입 알림.
-                // 내가 입장 시엔 메시지가 나에게만 오고(issued), 내가 퇴장 시엔 clients 배열에서 삭제 후 전송되니까 infoType이 alarm인 경우는 무조건 다른 유저의 출입 알림.
-                console.log(`${obj_data.message}`);
-            }else{
-                if(obj_data.id === m_id){
-                    console.log(`나, ${obj_data.id}: ${obj_data.message}`);
-                }else{
-                    console.log(`남, ${obj_data.id}: ${obj_data.message}`);
-                }
-            }
-            // 화면에서 구현 후 삭제할 로직 △
         }
 
         console.log('메시지 수: ', messages.length);
