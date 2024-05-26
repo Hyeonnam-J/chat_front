@@ -31,9 +31,9 @@ client.connect(PORT, HOST, () => {
             pushMessage(obj_data, m_id);
 
             // 화면에서 구현 후 삭제할 로직 ▽
-            if(obj_data.infoType === Chat.infoType.alaram){
+            if(obj_data.infoType === Chat.infoType.alarm){
                 // 다른 유저의 출입 알림.
-                // 내가 입장 시엔 메시지가 나에게만 오고(issued), 내가 퇴장 시엔 clients 배열에서 삭제 후 전송되니까 infoType이 alaram인 경우는 무조건 다른 유저의 출입 알림.
+                // 내가 입장 시엔 메시지가 나에게만 오고(issued), 내가 퇴장 시엔 clients 배열에서 삭제 후 전송되니까 infoType이 alarm인 경우는 무조건 다른 유저의 출입 알림.
                 console.log(`${obj_data.message}`);
             }else{
                 if(obj_data.id === m_id){
@@ -60,8 +60,8 @@ client.connect(PORT, HOST, () => {
     client.on('close', () => {
         console.log('서버와의 연결이 끊겼습니다');
 
-        const disconnectAlaram = new Chat(m_id, '서버와의 연결이 끊겼습니다 !', Chat.infoType.alaram, false);
-        pushMessage(disconnectAlaram, m_id);
+        const disconnectAlarm = new Chat(m_id, '서버와의 연결이 끊겼습니다 !', Chat.infoType.alarm, false);
+        pushMessage(disconnectAlarm, m_id);
         console.log('메시지 수: ', messages.length);
     });
 });
