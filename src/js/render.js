@@ -1,3 +1,5 @@
+'use strict';
+
 const Chat = require('./chat');
 
 function render(m_id, messages, document){

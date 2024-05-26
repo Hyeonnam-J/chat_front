@@ -1,3 +1,5 @@
+'use strict';
+
 const net = require('net');
 const Chat = require('./js/chat');
 const { render } = require('./js/render');
