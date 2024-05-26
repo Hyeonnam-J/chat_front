@@ -20,14 +20,10 @@ button {
 
 /* ******************************************************************************************* */
 
-.align-right {
+.flex-end {
     justify-content: flex-end;
 }
 
-.align-left {
+.flex-start {
     justify-content: flex-start
-}
-
-.align-center {
-    margin: 0 auto;
 }

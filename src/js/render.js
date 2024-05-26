@@ -20,7 +20,6 @@ function render(m_id, messages, document){
             // 그래서 issued가 거짓이고, infoType이 alaram인 경우는 무조건 다른 유저의 출입 알림.
             const serverAlarm = document.createElement('div');
             serverAlarm.className = 'serverAlaram';
-            serverAlarm.classList.add('align-center');
             serverAlarm.innerText = data.message;
 
             messageBox.appendChild(serverAlarm);
@@ -32,14 +31,15 @@ function render(m_id, messages, document){
             const message = document.createElement('div');
             message.className = 'message';
             message.innerText = data.message;
-
-            // 클래스 정렬 정리.
-            if(m_id === data.id){
+            
+            if(m_id === data.id){   // 내가 보낸 메시지
                 messageBox.appendChild(message);
                 messageBox.appendChild(profile);
-            }else{
+                messageBox.classList.add('flex-end');
+            }else{                  // 남이 보낸 메시지
                 messageBox.appendChild(profile);
                 messageBox.appendChild(message);
+                messageBox.classList.add('flex-start');
             }
         }
 
