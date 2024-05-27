@@ -1,6 +1,10 @@
 :root {
+    --width: 800px;
+    --height: 1200px;
+
     --profile-width: 50px;
     --profile-height: 50px;
 
-    --message-space:100px;
+    --message-padding: 10px 20px;
+    --message-cornerRadius: 10px;
 }

@@ -6,29 +6,26 @@
 
     display: flex;
     flex-direction: column;
-
-    background-color: azure;
 }
 
 #viewBox {
-    flex: 0.7;
-
-    background-color: red;
+    flex: 0.9;
+    overflow-y: auto;
 }
 
 .messageBox {
     display: flex;
 
-    width: 100%;
     height: fit-content;
 
     padding: 10px;
-    border: 5px solid black;
 }
 
 .serverAlarm {
     margin: 0 auto;
-    background-color: slategray;
+    padding: var(--message-padding);
+    background-color: #e1e3e1;
+    border-radius: var(--message-cornerRadius);
 }
 
 .profile {
@@ -36,29 +33,45 @@
     width: var(--profile-width);
     height: var(--profile-height);
 
-    background-color: yellowgreen;
+    /* 중앙 정렬 */
+    text-align: center;
+    line-height: var(--profile-height);
+
+    margin: 0 20px;
+
+    border: 2px solid palevioletred;
+    border-radius: 25px;
 }
 
 .message {
-    width: calc(100% - var(--profile-width) - var(--message-space));
+    width: fit-content;
+    max-width: calc(100% - 4 * var(--profile-width));
     word-break: break-all;
-    background-color: cornflowerblue;
+    padding: var(--message-padding);
+
+    border: 1px solid black;
+    border-radius: var(--message-cornerRadius);
 }
 
 #inputBox {
-    flex: 0.3;
-
+    flex: 0.1;
     display: flex;
-    background-color: blue;
+
+    padding: 5px;
+    gap: 5px;
 }
 
 #inputContent {
     flex: 0.7;
-    background-color: blueviolet;
+    border: 1px solid #0d6efd;
+    padding:10px;
 }
 
 #sendButton {
     flex: 0.3;
-    background-color: chartreuse;
+
+    background-color: #0d6efd;
+    color: white;
+    font-size: 1.2rem;
 }
 

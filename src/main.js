@@ -6,7 +6,7 @@ const path = require('path');
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 1200,
 
         // 페이지가 표시되기 전 전처리
         // _dirname: 현재 실행 중인 스크립트의 경로
@@ -22,7 +22,7 @@ const createWindow = () => {
     win.loadFile(path.join(__dirname, 'index.html'));
 
     // 개발 중 개발자 모드 활성화
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 }
 
 // 앱 준비 후 실행할 스크립트
