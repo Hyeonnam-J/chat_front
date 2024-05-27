@@ -7,4 +7,7 @@
 
     --message-padding: 10px 20px;
     --message-cornerRadius: 10px;
+
+    --inputBox-height: 100px;
+    --sendButton-width: 100px;
 }

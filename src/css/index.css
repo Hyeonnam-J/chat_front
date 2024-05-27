@@ -9,7 +9,7 @@
 }
 
 #viewBox {
-    flex: 0.9;
+    height: calc(100% - var(--inputBox-height));
     overflow-y: auto;
 }
 
@@ -54,7 +54,8 @@
 }
 
 #inputBox {
-    flex: 0.1;
+    height: var(--inputBox-height);
+
     display: flex;
 
     padding: 5px;
@@ -62,13 +63,14 @@
 }
 
 #inputContent {
-    flex: 0.7;
+    width: calc(100% - var(--sendButton-width));
+
     border: 1px solid #0d6efd;
     padding:10px;
 }
 
 #sendButton {
-    flex: 0.3;
+    width: var(--sendButton-width);
 
     background-color: #0d6efd;
     color: white;
