@@ -47,7 +47,10 @@
     width: fit-content;
     max-width: calc(100% - 4 * var(--profile-width));
     word-break: break-all;
+
     padding: var(--message-padding);
+
+    line-height: 1.8;
 
     border: 1px solid black;
     border-radius: var(--message-cornerRadius);

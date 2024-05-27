@@ -40,9 +40,8 @@ function render(_id, data, document){
         }
     }
 
-    // 스크롤을 가장 아래로.
     viewBox.appendChild(messageBox);
-    viewBox.scrollTop = viewBox.scrollHeight;
+    viewBox.scrollTop = viewBox.scrollHeight;   // 스크롤을 가장 아래로.
 }
 
 module.exports = { render };
