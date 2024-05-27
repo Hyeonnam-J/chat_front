@@ -2,7 +2,7 @@
 
 const Chat = require('./chat');
 
-function render(m_id, messages, document){
+function render(_id, messages, document){
     const viewBox = document.querySelector('#viewBox');
 
     // 뷰 박스 초기화.
@@ -34,7 +34,7 @@ function render(m_id, messages, document){
             message.className = 'message';
             message.innerText = data.message;
             
-            if(m_id === data.id){   // 내가 보낸 메시지
+            if(_id === data.id){   // 내가 보낸 메시지
                 messageBox.appendChild(message);
                 messageBox.appendChild(profile);
                 messageBox.classList.add('flex-end');
