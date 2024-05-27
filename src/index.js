@@ -4,7 +4,7 @@ const net = require('net');
 const Chat = require('./js/chat');
 const { render } = require('./js/render');
 
-// 서버 정보
+// 서버 정보.
 const PORT = 3000;
 const HOST = '127.0.0.1';
 
@@ -13,6 +13,7 @@ const client = new net.Socket();
 const inputContent = document.getElementById('inputContent');
 const sendButton = document.getElementById('sendButton');
 
+// DB 저장 용도?
 const messages = [];
 
 // 앱을 실행하면 바로 연결. 로그인 기능 생략.
@@ -31,7 +32,7 @@ client.connect(PORT, HOST, () => {
             console.log('id가 발급되었습니다: ', _id, ' / ', obj_data.message);
         }else{
             // 그 외의 경우는 모두 메시지 목록에 저장.
-            pushMessage(obj_data, _id);
+            pushMessage(_id, obj_data);
         }
 
         console.log('메시지 수: ', messages.length);
@@ -50,7 +51,7 @@ client.connect(PORT, HOST, () => {
         console.log('서버와의 연결이 끊겼습니다');
 
         const disconnectAlarm = new Chat(_id, '서버와의 연결이 끊겼습니다 !', Chat.INFO_TYPE.alarm, false);
-        pushMessage(disconnectAlarm, _id);
+        pushMessage(_id, disconnectAlarm);
         console.log('메시지 수: ', messages.length);
     });
 });
@@ -64,7 +65,7 @@ function sendMessage(_id) {
     inputContent.value = "";
 }
 
-function pushMessage(data, _id){
+function pushMessage(_id, data){
     messages.push(data);
-    render(_id, messages, document);
+    render(_id, data, document);
 }
