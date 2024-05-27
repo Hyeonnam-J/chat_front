@@ -20,6 +20,10 @@ const messages = [];
 client.connect(PORT, HOST, () => {
     let _id = -1;
 
+    client.once('connect', () => {
+        console.log('연결!');
+    });
+
     client.on('data', (data) => {
         const json_data = data.toString();
         const obj_data = JSON.parse(json_data);
@@ -41,7 +45,8 @@ client.connect(PORT, HOST, () => {
     // message 전송.
     sendButton.addEventListener('click', () => { sendMessage(_id); });
     inputContent.addEventListener('keydown', e => {
-        if(e.key === 'Enter'){
+        // Enter + shift = 개행.
+        if(e.key === 'Enter' && !e.shiftKey){
             e.preventDefault();
             sendMessage(_id);
         }
