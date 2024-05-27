@@ -65,6 +65,8 @@ function render(_id, messages, document){
 
             messageBox.appendChild(serverAlarm);
         }else{
+            // 그 외는 메시지.
+
             const profile = document.createElement('div');
             profile.className = 'profile';
             profile.innerText = data.id;
@@ -77,7 +79,6 @@ function render(_id, messages, document){
                 messageBox.appendChild(message);
                 messageBox.appendChild(profile);
                 messageBox.classList.add('flex-end');
-
                 message.style.border = '1px solid #0d6efd';
             }else{                  // 남이 보낸 메시지
                 messageBox.appendChild(profile);
@@ -86,7 +87,7 @@ function render(_id, messages, document){
             }
         }
 
-        // 최신 채팅이 뵝게 스크롤을 가장 아래로.
+        // 스크롤을 가장 아래로.
         viewBox.appendChild(messageBox);
         viewBox.scrollTop = viewBox.scrollHeight;
 }

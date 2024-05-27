@@ -23,6 +23,7 @@ client.connect(PORT, HOST, () => {
         const json_data = data.toString();
         const obj_data = JSON.parse(json_data);
 
+        // 계속 체크를 해야 하니 다른 방법이..
         if(obj_data.issued){
             // 나 입장 시, 메시지 목록에 추가하지 않고, 아이디 발급 로직.
             // 서버가 접속한 소켓에게만 단독으로 보낸 메시지.
