@@ -22,7 +22,7 @@ function render(_id, data, document){
 
         const profile = document.createElement('div');
         profile.className = 'profile';
-        profile.innerText = data.id;
+        profile.innerText = data.nick;
 
         const message = document.createElement('div');
         message.className = 'message';
