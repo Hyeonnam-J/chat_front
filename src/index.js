@@ -48,7 +48,7 @@ client.connect(PORT, HOST, () => {
     client.on('close', () => {
         console.log('서버와의 연결이 끊겼습니다');
 
-        const disconnectAlarm = new Chat(m_id, '서버와의 연결이 끊겼습니다 !', Chat.infoType.alarm, false);
+        const disconnectAlarm = new Chat(m_id, '서버와의 연결이 끊겼습니다 !', Chat.INFO_TYPE.alarm, false);
         pushMessage(disconnectAlarm, m_id);
         console.log('메시지 수: ', messages.length);
     });
@@ -57,7 +57,7 @@ client.connect(PORT, HOST, () => {
 function sendMessage(m_id) {
     if(inputContent.value.length === 0) return;
 
-    const obj_chat = new Chat(m_id, inputContent.value, Chat.infoType.message, false);
+    const obj_chat = new Chat(m_id, inputContent.value, Chat.INFO_TYPE.message, false);
     const json_chat = JSON.stringify(obj_chat);
     client.write(json_chat);
     inputContent.value = "";
