@@ -38,7 +38,6 @@ app.whenReady().then( () => {
 // 맥 OS에서는 모든 창이 닫혀도 종료가 되지 않음.
 // 맥 OS에서 일관된 사용자 경험을 위함.
 app.on('window-all-closed', () => {
-
     // 맥 OS가 아니면 종료.
     if(process.platform !== 'darwin') app.quit();
 });

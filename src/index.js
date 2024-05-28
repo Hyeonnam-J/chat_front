@@ -24,50 +24,50 @@ const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 const numberRegex = /^[0-9]+$/;
 
 // 유효성 검사.
-function validateInputServerInfo(name){
+function executeValidation(name){
     switch(name){
         case "host":
             const _host = inputHost.value;
 
             if(_host === ''){
-                executeValidation(alarmInputHost, '호스트 정보를 입력하세요.', 'host', false);
+                setValidation(alarmInputHost, '호스트 정보를 입력하세요.', 'host', false);
                 isHostValid = false;
                 return ;
             }else if(_host.includes(' ')){
-                executeValidation(alarmInputHost, '공백을 포함할 수 없습니다.', 'host', false);
+                setValidation(alarmInputHost, '공백을 포함할 수 없습니다.', 'host', false);
                 isHostValid = false;
                 return ;
             }
 
             if(! ipRegex.test(_host) && ! domainRegex.test(_host)){
-                executeValidation(alarmInputHost, '올바르지 못한 호스트 정보입니다.', 'host', false);
+                setValidation(alarmInputHost, '올바르지 못한 호스트 정보입니다.', 'host', false);
                 isHostValid = false;
                 return ;
             }
             
-            executeValidation(alarmInputHost, '올바른 정보.', 'host', true);
+            setValidation(alarmInputHost, '올바른 정보.', 'host', true);
             return ;
             
         case "port":
             const _port = inputPort.value;
 
             if(! numberRegex.test(_port)){
-                executeValidation(alarmInputPort, '문자열은 입력할 수 없습니다.', 'port', false);
+                setValidation(alarmInputPort, '문자열은 입력할 수 없습니다.', 'port', false);
                 return ;
             }else if(_port.toString().trim() === ''){
-                executeValidation(alarmInputPort, '포트 정보를 입력하세요.', 'port', false);
+                setValidation(alarmInputPort, '포트 정보를 입력하세요.', 'port', false);
                 return ;
             }else if(_port.toString().includes(' ')){
-                executeValidation(alarmInputPort, '공백을 포함할 수 없습니다.', 'port', false);
+                setValidation(alarmInputPort, '공백을 포함할 수 없습니다.', 'port', false);
                 return ;
             }
 
-            executeValidation(alarmInputPort, '올바른 정보.', 'port', true);
+            setValidation(alarmInputPort, '올바른 정보.', 'port', true);
             return ;
     }
 }
 
-function executeValidation(element, message, input, isValid){
+function setValidation(element, message, input, isValid){
     element.textContent = message;
 
     if(isValid) element.style.color = 'green';
@@ -83,8 +83,8 @@ function executeValidation(element, message, input, isValid){
     }
 }
 
-inputHost.addEventListener('input', () => validateInputServerInfo('host'));
-inputPort.addEventListener('input', () => validateInputServerInfo('port'));
+inputHost.addEventListener('input', () => executeValidation('host'));
+inputPort.addEventListener('input', () => executeValidation('port'));
 
 // 입력.
 selectServerButton.addEventListener('click', () => {
@@ -193,6 +193,7 @@ function startConnection() {
             }
         })
 
+        // close -> 소켓이 완전히 닫힐 때 발생.
         client.on('close', () => {
             console.log('서버와의 연결이 끊겼습니다');
 
