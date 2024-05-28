@@ -21,6 +21,7 @@ const nickContainer = document.getElementById('nick-container');
 // ip, domain regex.
 const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
+const numberRegex = /^[0-9]+$/;
 
 // 유효성 검사.
 function validateInputHostInfo(){
@@ -50,7 +51,7 @@ function validateInputHostInfo(){
 function validateInputPortInfo(){
     const _port = inputPort.value;
 
-    if(isNaN(parseInt(_port))){
+    if(! numberRegex.test(_port)){
         invalidAlarm(alarmInputPort, '문자열은 입력할 수 없습니다.');
         isPortValid = false;
         return ;
