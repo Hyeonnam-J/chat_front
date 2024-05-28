@@ -18,84 +18,92 @@ let isHostValid, isPortValid = false;
 
 const nickContainer = document.getElementById('nick-container');
 
-// ip, domain regex.
+// regex.
 const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 const numberRegex = /^[0-9]+$/;
 
 // 유효성 검사.
-function validateInputHostInfo(){
-    const _host = inputHost.value;
+function validateInputServerInfo(name){
+    switch(name){
+        case "host":
+            const _host = inputHost.value;
 
-    if(_host === ''){
-        invalidAlarm(alarmInputHost, '호스트 정보를 입력하세요.');
-        isHostValid = false;
-        return ;
-    }else if(_host.includes(' ')){
-        invalidAlarm(alarmInputHost, '공백을 포함할 수 없습니다.');
-        isHostValid = false;
-        return ;
-    }
+            if(_host === ''){
+                executeValidation(alarmInputHost, '호스트 정보를 입력하세요.', 'host', false);
+                isHostValid = false;
+                return ;
+            }else if(_host.includes(' ')){
+                executeValidation(alarmInputHost, '공백을 포함할 수 없습니다.', 'host', false);
+                isHostValid = false;
+                return ;
+            }
 
-    if(! ipRegex.test(_host) && ! domainRegex.test(_host)){
-        invalidAlarm(alarmInputHost, '올바르지 못한 호스트 정보입니다.');
-        isHostValid = false;
-        return ;
+            if(! ipRegex.test(_host) && ! domainRegex.test(_host)){
+                executeValidation(alarmInputHost, '올바르지 못한 호스트 정보입니다.', 'host', false);
+                isHostValid = false;
+                return ;
+            }
+            
+            executeValidation(alarmInputHost, '올바른 정보.', 'host', true);
+            return ;
+            
+        case "port":
+            const _port = inputPort.value;
+
+            if(! numberRegex.test(_port)){
+                executeValidation(alarmInputPort, '문자열은 입력할 수 없습니다.', 'port', false);
+                return ;
+            }else if(_port.toString().trim() === ''){
+                executeValidation(alarmInputPort, '포트 정보를 입력하세요.', 'port', false);
+                return ;
+            }else if(_port.toString().includes(' ')){
+                executeValidation(alarmInputPort, '공백을 포함할 수 없습니다.', 'port', false);
+                return ;
+            }
+
+            executeValidation(alarmInputPort, '올바른 정보.', 'port', true);
+            return ;
     }
-    
-    alarmInputHost.textContent = '올바른 정보.';
-    alarmInputHost.style.color = 'green';
-    isHostValid = true;
 }
 
-function validateInputPortInfo(){
-    const _port = inputPort.value;
-
-    if(! numberRegex.test(_port)){
-        invalidAlarm(alarmInputPort, '문자열은 입력할 수 없습니다.');
-        isPortValid = false;
-        return ;
-    }else if(_port.toString().trim() === ''){
-        invalidAlarm(alarmInputPort, '포트 정보를 입력하세요.');
-        isPortValid = false;
-        return ;
-    }else if(_port.toString().includes(' ')){
-        invalidAlarm(alarmInputPort, '공백을 포함할 수 없습니다.');
-        isPortValid = false;
-        return ;
-    }
-
-    alarmInputPort.textContent = '올바른 정보.';
-    alarmInputPort.style.color = 'green';
-    isPortValid = true;
-}
-
-function invalidAlarm(element, message){
+function executeValidation(element, message, input, isValid){
     element.textContent = message;
-    element.style.color = 'red';
+
+    if(isValid) element.style.color = 'green';
+    else element.style.color = 'red';
+    
+    switch(input){
+        case "host":
+            if(isValid) isHostValid = true;
+            else isHostValid = false;
+        case "port":
+            if(isValid) isPortValid = true;
+            else isPortValid = false;
+    }
 }
 
-inputHost.addEventListener('input', validateInputHostInfo);
-inputPort.addEventListener('input', validateInputPortInfo);
+inputHost.addEventListener('input', () => validateInputServerInfo('host'));
+inputPort.addEventListener('input', () => validateInputServerInfo('port'));
 
 // 입력.
 selectServerButton.addEventListener('click', () => {
-    connectServer();
+    enterServerInfo();
 });
 inputHost.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
         e.preventDefault();
-        connectServer();
+        enterServerInfo();
     }
 })
 inputPort.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
         e.preventDefault();
-        connectServer();
+        enterServerInfo();
     }
 })
 
-function connectServer(){
+function enterServerInfo(){
     if(! isHostValid || ! isPortValid) return ;
 
     const _host = inputHost.value;
@@ -135,7 +143,7 @@ function enterNick() {
     nickContainer.style.display = 'none';
     chatContainer.style.display = 'flex';
     
-    startConnect();
+    startConnection();
 }
 /* 닉네임 입력 ▲ */
 
@@ -147,7 +155,7 @@ const sendButton = document.getElementById('sendButton');
 // DB 저장 용도?
 const messages = [];
 
-function startConnect() {
+function startConnection() {
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
     client.connect(port, host, () => {
         let id = -1;
