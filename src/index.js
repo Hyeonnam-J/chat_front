@@ -1,21 +1,63 @@
 'use strict';
 
-const { getServerInfo } = require('./preload');
 const net = require('net');
 const Chat = require('./js/chat');
 const { render } = require('./js/render');
 
-// 외부 파일로부터 서버 정보 읽어오기.
 let host, port;
-getServerInfo().then(s => {
-    host = s.host;
-    port = s.port;
+
+/* 서버 정보 입력 ▼ */
+const connectionContainer = document.getElementById('connection-container');
+const inputHost = document.getElementById('inputHost');
+const inputPort = document.getElementById('inputPort');
+const selectServerButton = document.getElementById('selectServerButton');
+
+const nickContainer = document.getElementById('nick-container');
+
+selectServerButton.addEventListener('click', () => {
+    connectServer();
 });
+inputHost.addEventListener('ketdown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        connectServer();
+    }
+})
+inputPort.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        connectServer();
+    }
+})
+
+function connectServer(){
+    const _host = inputHost.value;
+    const _port = inputPort.value;
+
+    // todo: 반응형으로 변경.
+    if (_host.trim() === '' || _port === null || _port === '' || isNaN(_port)) {
+        alert('??');
+        return;
+    }
+    const _parsePort = parseInt(_port.toString().trim());
+    if(isNaN(_parsePort)){
+        alert('포트 번호는 숫자만 입력할 수 있습니다');
+        return ;
+    }
+
+    const _parseHost = _host.trim();
+
+    host = _parseHost;
+    port = _parsePort;
+    
+    connectionContainer.style.display = 'none';
+    nickContainer.style.display = 'block';
+}
+/* 서버 정보 입력 ▲ */
 
 /* 닉네임 입력 ▼ */
 let nick = '없음';
 
-const nickContainer = document.getElementById('nick-container');
 const chatContainer = document.getElementById('chat-container');
 const inputNick = document.getElementById('inputNick');
 const submitNickButton = document.getElementById('submitNickButton');

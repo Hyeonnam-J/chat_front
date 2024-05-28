@@ -10,7 +10,18 @@
     <link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
-    <div id="nick-container">
+    <div id="connection-container" class="absolute-center">
+        <div>
+            <div id="hostBox">
+                <h3>HOST : </h3><input type="text" id="inputHost">
+            </div>
+            <div id="portBox">
+                <h3>PORT : </h3><input type="number" id="inputPort">
+            </div>
+        </div>
+        <button id="selectServerButton">▶</button>
+    </div>
+    <div id="nick-container" class="absolute-center">
         <h2 id="nick-container-question">닉네임을 입력하세요</h2>
         <div id="nick-inputBox">
             <input type="text" id="inputNick">

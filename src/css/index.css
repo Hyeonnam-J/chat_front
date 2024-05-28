@@ -1,12 +1,29 @@
 @import './variable.css';
 
+#connection-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+#hostBox, #portBox {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+#selectServerButton {
+    width: 83px;
+    height: 83px;
+
+    border: 1px solid var(--primary-color);
+    background-color: white;
+    color: var(--primary-color);
+}
+
 #nick-container {
     width: 100%;
 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: none;
 }
 
 #nick-container-question {
@@ -28,11 +45,6 @@
 
     display: none;
     flex-direction: column;
-}
-
-#inputNick {
-    border: 1px solid var(--primary-color);
-    padding: 10px;
 }
 
 #submitNickButton {

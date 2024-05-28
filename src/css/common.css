@@ -19,6 +19,11 @@ button {
     border: none;
 }
 
+input {
+    border: 1px solid var(--primary-color);
+    padding: 10px;
+}
+
 /* ******************************************************************************************* */
 
 .flex-end {
@@ -27,4 +32,11 @@ button {
 
 .flex-start {
     justify-content: flex-start
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
