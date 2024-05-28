@@ -12,12 +12,76 @@ const inputHost = document.getElementById('inputHost');
 const inputPort = document.getElementById('inputPort');
 const selectServerButton = document.getElementById('selectServerButton');
 
+const alarmInputHost = document.getElementById('alarm-inputHost');
+const alarmInputPort = document.getElementById('alarm-inputPort');
+let isHostValid, isPortValid = false;
+
 const nickContainer = document.getElementById('nick-container');
 
+// ip, domain regex.
+const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
+
+// 유효성 검사.
+function validateInputHostInfo(){
+    const _host = inputHost.value;
+
+    if(_host === ''){
+        invalidAlarm(alarmInputHost, '호스트 정보를 입력하세요.');
+        isHostValid = false;
+        return ;
+    }else if(_host.includes(' ')){
+        invalidAlarm(alarmInputHost, '공백을 포함할 수 없습니다.');
+        isHostValid = false;
+        return ;
+    }
+
+    if(! ipRegex.test(_host) && ! domainRegex.test(_host)){
+        invalidAlarm(alarmInputHost, '올바르지 못한 호스트 정보입니다.');
+        isHostValid = false;
+        return ;
+    }
+    
+    alarmInputHost.textContent = '올바른 정보.';
+    alarmInputHost.style.color = 'green';
+    isHostValid = true;
+}
+
+function validateInputPortInfo(){
+    const _port = inputPort.value;
+
+    if(isNaN(parseInt(_port))){
+        invalidAlarm(alarmInputPort, '문자열은 입력할 수 없습니다.');
+        isPortValid = false;
+        return ;
+    }else if(_port.toString().trim() === ''){
+        invalidAlarm(alarmInputPort, '포트 정보를 입력하세요.');
+        isPortValid = false;
+        return ;
+    }else if(_port.toString().includes(' ')){
+        invalidAlarm(alarmInputPort, '공백을 포함할 수 없습니다.');
+        isPortValid = false;
+        return ;
+    }
+
+    alarmInputPort.textContent = '올바른 정보.';
+    alarmInputPort.style.color = 'green';
+    isPortValid = true;
+}
+
+function invalidAlarm(element, message){
+    element.textContent = message;
+    element.style.color = 'red';
+}
+
+inputHost.addEventListener('input', validateInputHostInfo);
+inputPort.addEventListener('input', validateInputPortInfo);
+
+// 입력.
 selectServerButton.addEventListener('click', () => {
     connectServer();
 });
-inputHost.addEventListener('ketdown', e => {
+inputHost.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
         e.preventDefault();
         connectServer();
@@ -31,24 +95,13 @@ inputPort.addEventListener('keydown', e => {
 })
 
 function connectServer(){
+    if(! isHostValid || ! isPortValid) return ;
+
     const _host = inputHost.value;
     const _port = inputPort.value;
 
-    // todo: 반응형으로 변경.
-    if (_host.trim() === '' || _port === null || _port === '' || isNaN(_port)) {
-        alert('??');
-        return;
-    }
-    const _parsePort = parseInt(_port.toString().trim());
-    if(isNaN(_parsePort)){
-        alert('포트 번호는 숫자만 입력할 수 있습니다');
-        return ;
-    }
-
-    const _parseHost = _host.trim();
-
-    host = _parseHost;
-    port = _parsePort;
+    host = _host;
+    port = _port;
     
     connectionContainer.style.display = 'none';
     nickContainer.style.display = 'block';
