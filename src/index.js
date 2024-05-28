@@ -1,30 +1,15 @@
 'use strict';
 
-const fs = require('fs');
+const { getServerInfo } = require('./preload');
+const net = require('net');
+const Chat = require('./js/chat');
+const { render } = require('./js/render');
 
-let HOST;
-let PORT;
-
-// 호스트, 포트 정보 가져오기.
-const filePath = '/home/hn/project/chat_etc/server.txt';
-fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) {
-        console.log('에러: ', err);
-    } else {
-        console.log('서버 정보: ', data);
-
-        const seperator = data.indexOf('/');
-        const strHost = data.substring(0, seperator).trim();
-        const strPort = data.substring(seperator + 1).trim();
-
-        const hostSeperator = strHost.indexOf(':');
-        const portSeperator = strPort.indexOf(':');
-        const _host = strHost.substring(hostSeperator + 1).trim();
-        const _port = strPort.substring(portSeperator + 1).trim();
-
-        HOST = _host.toString();
-        PORT = parseInt(_port);
-    }
+// 외부 파일로부터 서버 정보 읽어오기.
+let host, port;
+getServerInfo().then(s => {
+    host = s.host;
+    port = s.port;
 });
 
 /* 닉네임 입력 ▼ */
@@ -58,10 +43,6 @@ function enterNick() {
 }
 /* 닉네임 입력 ▲ */
 
-const net = require('net');
-const Chat = require('./js/chat');
-const { render } = require('./js/render');
-
 const client = new net.Socket();
 
 const inputContent = document.getElementById('inputContent');
@@ -72,7 +53,7 @@ const messages = [];
 
 function startConnect() {
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
-    client.connect(PORT, HOST, () => {
+    client.connect(port, host, () => {
         let id = -1;
 
         client.on('data', (data) => {
