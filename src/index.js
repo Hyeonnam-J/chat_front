@@ -155,16 +155,21 @@ const sendButton = document.getElementById('sendButton');
 // DB 저장 용도?
 const messages = [];
 
-const client = new net.Socket();
+let client;
 
 function startConnection() {
+    console.log('startConnection..');
+    client =  new net.Socket();
+
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
     client.connect(serverPort, serverHost, () => {
-        
         // 연결되고 나서 내 아이디가 -1이면 서버로부터 아이디 발급 과정 진행.
         if(id === -1){
-            const requestIdChat = new Chat(id, nick, 'id 주세요', Chat.INFO_TYPE.requestId, serverPort, serverHost);
-            client.write(JSON.stringify(requestIdChat));
+            const requestChat = new Chat(id, nick, '소켓 정보랑 아이디 주세요.', Chat.INFO_TYPE.requestClientSocketInfoWithId, serverPort, serverHost);
+            client.write(JSON.stringify(requestChat));
+        } else {
+            const requestChat = new Chat(id, nick, '소켓 정보만 주세요.', Chat.INFO_TYPE.requestClientSocketInfo, serverPort, serverHost);
+            client.write(JSON.stringify(requestChat));
         }
 
         client.on('data', (data) => {
@@ -173,12 +178,17 @@ function startConnection() {
 
             console.log('서버로부터 받은 데이터: ', json_data);
 
-            if (obj_data.infoType === Chat.INFO_TYPE.issueId) {
+            if (obj_data.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
                 // 나 입장 시, 메시지 목록에 추가하지 않고, 아이디 발급 로직.
                 // 서버가 접속한 소켓에게만 단독으로 보낸 메시지.
                 id = obj_data.id;
                 console.log(`서버로부터 환영인사가 도착했습니다. ${obj_data.message} ${nick}님, id가 발급되었습니다: `, id);
 
+                // 자신의 net 정보 저장.
+                clientHost = obj_data.destinationHost;
+                clientPort = obj_data.destinationPort;
+                console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
+            } else if(obj_data.infoType === Chat.INFO_TYPE.responseClientSocketInfo){
                 // 자신의 net 정보 저장.
                 clientHost = obj_data.destinationHost;
                 clientPort = obj_data.destinationPort;
@@ -197,7 +207,7 @@ function startConnection() {
             // Enter + shift = 개행.
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendMessage(id, client);
+                sendMessage(id);
             }
         });
 
@@ -212,58 +222,19 @@ function startConnection() {
             // 서버 재시작 알림용.
             const temp_server = net.createServer(Socket => {
                 console.log('서버 연락 옴!');
-                // restartConnection();
-                // todo temp_server 종료.
+                startConnection();
+
+                // 서버에서 연락오면 역할이 끝난 임시 서버는 종료.
+                temp_server.close();
             });
 
-            temp_server.listen(myPort, myHost, () => {
-                console.log(`서버 연락 대기 중... port: ${myPort}, host: ${myHost}`);
+            temp_server.listen(clientPort, clientHost, () => {
+                console.log(`서버 연락 대기 중... port: ${clientPort}, host: ${clientHost}`);
             });
         });
     });
 }
 
-// function restartConnection(){
-//     client.connect(port, host, () => {
-//         client.on('data', data => {
-//             const json_data = data.toString();
-//             const obj_data = JSON.parse(json_data);
-
-//             console.log('서버로부터 받은 데이터: ', json_data);
-//             addMessageList(id, obj_data);
-
-//             console.log('메시지 수: ', messages.length);
-//         });
-//     });
-
-//     // message 전송.
-//     sendButton.addEventListener('click', () => { sendMessage(id); });
-//     inputContent.addEventListener('keydown', e => {
-//         // Enter + shift = 개행.
-//         if (e.key === 'Enter' && !e.shiftKey) {
-//             e.preventDefault();
-//             sendMessage(id, client);
-//         }
-//     });
-
-//     client.on('close', () => {
-//         console.log('서버와의 연결이 끊겼습니다');
-
-//         const disconnectAlarm = new Chat(id, nick, '서버와의 연결이 끊겼습니다 !', Chat.INFO_TYPE.alarm, false, client.remotePort, client.remoteAddress);
-//         addMessageList(id, disconnectAlarm);
-//         console.log('메시지 수: ', messages.length);
-
-//         // 서버 재시작 알림용.
-//         const temp_server = net.createServer(Socket => {
-//             console.log('서버 연락 옴!');
-//             restartConnection();
-//         });
-
-//         temp_server.listen(myPort, myHost, () => {
-//             console.log(`서버 연락 대기 중... port: ${myPort}, host: ${myHost}`);
-//         });
-//     });
-// }
 
 function sendMessage(id) {
     if (inputContent.value.length === 0) return;
@@ -272,6 +243,8 @@ function sendMessage(id) {
     const json_chat = JSON.stringify(obj_chat);
     client.write(json_chat);
     inputContent.value = "";
+
+    console.log('sendMessage: ', json_chat);
 }
 
 function addMessageList(id, data) {

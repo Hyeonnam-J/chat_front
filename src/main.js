@@ -22,7 +22,7 @@ const createWindow = () => {
     win.loadFile(path.join(__dirname, 'index.html'));
 
     // 개발 중 개발자 모드 활성화
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 }
 
 // 앱 준비 후 실행할 스크립트
