@@ -1,6 +1,5 @@
 @import './variable.css';
 
-
 #hostBox, #portBox {
     display: flex;
     gap: 20px;

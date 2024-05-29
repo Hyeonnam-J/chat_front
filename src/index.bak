@@ -1,91 +1,28 @@
 'use strict';
 
 const net = require('net');
-
 const Chat = require('./js/chat');
 const { render } = require('./js/rendering');
 
+let id = -1;
+let clientHost, clientPort, serverHost, serverPort;
+
+/* 서버 정보 입력 ▼ */
 const connectionContainer = document.getElementById('connection-container');
 const inputHost = document.getElementById('inputHost');
 const inputPort = document.getElementById('inputPort');
 const selectServerButton = document.getElementById('selectServerButton');
+
 const alarmInputHost = document.getElementById('alarm-inputHost');
 const alarmInputPort = document.getElementById('alarm-inputPort');
-const nickContainer = document.getElementById('nick-container');
-const chatContainer = document.getElementById('chat-container');
-const inputNick = document.getElementById('inputNick');
-const submitNickButton = document.getElementById('submitNickButton');
-const inputContent = document.getElementById('inputContent');
-const sendButton = document.getElementById('sendButton');
-
-let id = -1;
-let nick = '없음';
-let clientHost, clientPort, serverHost, serverPort;
 let isHostValid, isPortValid = false;
-const messages = [];    // DB 저장 용도?
-let client;
 
+const nickContainer = document.getElementById('nick-container');
+
+// regex.
 const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 const numberRegex = /^[0-9]+$/;
-
-inputHost.addEventListener('input', () => executeValidation('host'));
-inputPort.addEventListener('input', () => executeValidation('port'));
-
-// 서버 정보 입력 리스너.
-selectServerButton.addEventListener('click', () => {
-    enterServerInfo();
-});
-inputHost.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        enterServerInfo();
-    }
-});
-inputPort.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        enterServerInfo();
-    }
-});
-
-// 닉네임 입력 리스너.
-submitNickButton.addEventListener('click', () => {
-    enterNick();
-});
-inputNick.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        enterNick();
-    }
-});
-
-// 서버 정보 입력
-function enterServerInfo(){
-    if(! isHostValid || ! isPortValid) return ;
-
-    const _host = inputHost.value;
-    const _port = inputPort.value;
-
-    serverHost = _host;
-    serverPort = _port;
-    
-    connectionContainer.style.display = 'none';
-    nickContainer.style.display = 'block';
-}
-
-// 닉네임 입력.
-function enterNick() {
-    nick = inputNick.value;
-    if (nick.length > 4) {
-        nick = nick.substring(0, 3) + '..';
-    };
-
-    nickContainer.style.display = 'none';
-    chatContainer.style.display = 'flex';
-    
-    startConnection();
-}
 
 // 유효성 검사.
 function executeValidation(name){
@@ -147,6 +84,81 @@ function setValidation(element, message, input, isValid){
             else isPortValid = false;
     }
 }
+
+inputHost.addEventListener('input', () => executeValidation('host'));
+inputPort.addEventListener('input', () => executeValidation('port'));
+
+// 서버 정보 입력 리스너.
+selectServerButton.addEventListener('click', () => {
+    enterServerInfo();
+});
+inputHost.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        enterServerInfo();
+    }
+})
+inputPort.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        enterServerInfo();
+    }
+})
+
+// 서버 정보 입력
+function enterServerInfo(){
+    if(! isHostValid || ! isPortValid) return ;
+
+    const _host = inputHost.value;
+    const _port = inputPort.value;
+
+    serverHost = _host;
+    serverPort = _port;
+    
+    connectionContainer.style.display = 'none';
+    nickContainer.style.display = 'block';
+}
+/* 서버 정보 입력 ▲ */
+
+/* 닉네임 입력 ▼ */
+let nick = '없음';
+
+const chatContainer = document.getElementById('chat-container');
+const inputNick = document.getElementById('inputNick');
+const submitNickButton = document.getElementById('submitNickButton');
+
+// 닉네임 입력 리스너.
+submitNickButton.addEventListener('click', () => {
+    enterNick();
+});
+inputNick.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        enterNick();
+    }
+});
+
+// 닉네임 입력.
+function enterNick() {
+    nick = inputNick.value;
+    if (nick.length > 4) {
+        nick = nick.substring(0, 3) + '..';
+    };
+
+    nickContainer.style.display = 'none';
+    chatContainer.style.display = 'flex';
+    
+    startConnection();
+}
+/* 닉네임 입력 ▲ */
+
+const inputContent = document.getElementById('inputContent');
+const sendButton = document.getElementById('sendButton');
+
+// DB 저장 용도?
+const messages = [];
+
+let client;
 
 /**
  * 서버로 연결 요청 및 채팅에 이용되는 로직 전반.
