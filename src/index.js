@@ -84,7 +84,7 @@ function enterNick() {
     nickContainer.style.display = 'none';
     chatContainer.style.display = 'flex';
     
-    startConnection();
+    connect();
 }
 
 // 유효성 검사.
