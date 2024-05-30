@@ -156,10 +156,13 @@ function setValidation(element, message, input, isValid){
  * 
  * 서버 재실행 시,
  * 열어둔 서버 종료(temp_server.close()),
- * 기존 connect() 메서드는 실행 종료.
+ * 기존 connect() 메서드는 실행 종료,
+ * 기존 소켓이 있다면 닫기(if(client) client.destroy()),
  */
 function connect() {
     console.log('connecting..');
+
+    if(client) client.destroy();
     client =  new net.Socket();
 
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
