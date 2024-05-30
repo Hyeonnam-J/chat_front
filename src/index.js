@@ -154,11 +154,10 @@ function setValidation(element, message, input, isValid){
  * 
  * 서버 재실행 시,
  * 열어둔 서버 종료(temp_server.close()),
- * 기존 소켓 자바스크립트 가비지 컬렉터가 메모리 해제(client = new net.Socket()),
- * 기존 startConnection() 메서드는 실행 종료.
+ * 기존 connect() 메서드는 실행 종료.
  */
-function startConnection() {
-    console.log('startConnection..');
+function connect() {
+    console.log('connecting..');
     client =  new net.Socket();
 
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
@@ -226,7 +225,7 @@ function startConnection() {
             // 서버 재시작 알림용.
             const temp_server = net.createServer(Socket => {
                 console.log('서버 연락 옴!');
-                startConnection();
+                connect();
 
                 // 서버에서 연락오면 역할이 끝난 임시 서버는 종료.
                 temp_server.close();
@@ -238,7 +237,7 @@ function startConnection() {
         });
     });
 
-    console.log('confirm startConnetcion() exit...');
+    console.log('confirm connect() exit...');
 }
 
 // 서버로 메시지 전송
