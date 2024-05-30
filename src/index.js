@@ -29,6 +29,8 @@ const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[
 const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 const numberRegex = /^[0-9]+$/;
 
+executeValidation('host');
+executeValidation('port');
 inputHost.addEventListener('input', () => executeValidation('host'));
 inputPort.addEventListener('input', () => executeValidation('port'));
 
