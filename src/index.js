@@ -165,6 +165,11 @@ function connect() {
     if(client) client.destroy();
     client =  new net.Socket();
 
+    client.on('error', (error) => {
+        console.error(error);
+        alert('연결 실패');
+    });
+
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
     client.connect(serverPort, serverHost, () => {
         // 연결되고 나서 내 아이디가 -1이면 서버로부터 아이디 발급 과정 진행.
