@@ -89,7 +89,7 @@ function enterNick() {
     client = new net.Socket();
 
     client.connect(serverPort, serverHost, () => {
-        
+        // 서버 측은 on 메서드를 한 곳에서 처리하므로 규약에 맞게 Chat 객체 생성해서 보내기.
         client.write(JSON.stringify(new Chat(-1, nick, '닉네임 중복 체크', Chat.INFO_TYPE.checkDuplicatedNick, serverPort, serverHost)));
 
         client.on('data', (data) => {
@@ -97,7 +97,7 @@ function enterNick() {
                 notificationContainer.style.display = 'block';
                 notificationButton.addEventListener('click', () => {
                     notificationContainer.style.display = 'none';
-                }, { once: true });            
+                }, { once: true });
             } else {
                 client.destroy();
 
