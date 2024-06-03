@@ -182,36 +182,40 @@ function connect() {
         }
 
         client.on('data', (data) => {
-            const json_data = data.toString();
-            const obj_data = JSON.parse(json_data);
+            // 서버에서 분리해서 보냈더라도 그 간격이 짧을 경우 소켓은 한 번에 받는다.
+            let arr_data = data.toString().split('{').filter(Boolean);
+            arr_data = arr_data.map(d => {
+                return JSON.parse('{' + d);
+            });
+            console.log('서버로부터 받은 arr_data : ', arr_data);
 
-            console.log('서버로부터 받은 데이터: ', json_data);
+            arr_data.forEach(d => {
+                if (d.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
+                    // 나 입장 시, 메시지 목록에 추가하지 않고, 아이디 발급 로직.
+                    // 서버가 접속한 소켓에게만 단독으로 보낸 메시지.
+                    id = d.id;
+                    console.log(`서버로부터 환영인사가 도착했습니다. ${d.message} ${nick}님, id가 발급되었습니다: `, id);
 
-            if (obj_data.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
-                // 나 입장 시, 메시지 목록에 추가하지 않고, 아이디 발급 로직.
-                // 서버가 접속한 소켓에게만 단독으로 보낸 메시지.
-                id = obj_data.id;
-                console.log(`서버로부터 환영인사가 도착했습니다. ${obj_data.message} ${nick}님, id가 발급되었습니다: `, id);
+                    // 자신의 net 정보 저장.
+                    clientHost = d.destinationHost;
+                    clientPort = d.destinationPort;
+                    console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
+                } else if(d.infoType === Chat.INFO_TYPE.responseClientSocketInfo){
+                    // 자신의 net 정보 저장.
+                    clientHost = d.destinationHost;
+                    clientPort = d.destinationPort;
+                    console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
 
-                // 자신의 net 정보 저장.
-                clientHost = obj_data.destinationHost;
-                clientPort = obj_data.destinationPort;
-                console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
-            } else if(obj_data.infoType === Chat.INFO_TYPE.responseClientSocketInfo){
-                // 자신의 net 정보 저장.
-                clientHost = obj_data.destinationHost;
-                clientPort = obj_data.destinationPort;
-                console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
+                    // 서버 알림으로 바꿈.
+                    d.infoType = Chat.INFO_TYPE.inform;
+                    addMessageList(id, d);
+                } else {
+                    // 그 외의 경우는 모두 메시지 목록에 저장.
+                    addMessageList(id, d);
+                }
 
-                // 서버 알림으로 바꿈.
-                obj_data.infoType = Chat.INFO_TYPE.inform;
-                addMessageList(id, obj_data);
-            } else {
-                // 그 외의 경우는 모두 메시지 목록에 저장.
-                addMessageList(id, obj_data);
-            }
-
-            console.log('메시지 수: ', messages.length);
+                console.log('메시지 수: ', messages.length);
+            });
         });
 
         // message 전송.
