@@ -11,5 +11,8 @@
     --inputBox-height: 100px;
     --sendButton-width: 100px;
 
+    --notification-width: 500px;
+    --notification-height: 200px;
+
     --primary-color: #0d6efd;
 }

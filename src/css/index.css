@@ -125,3 +125,45 @@
     font-size: 1.2rem;
 }
 
+#notification-container {
+    position: absolute;
+}
+
+#notification-container {
+    width: 100%;
+    height: 100%;
+
+    display: none;
+}
+
+#notification-background {
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(128, 128, 128, 0.5);
+}
+
+#notification-box {
+    width: var(--notification-width);
+    height: var(--notification-height);
+    background-color: white;
+    border: 1px solid black;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 30px;
+}
+
+#notification-box > h3 {
+    font-size: 1.5rem;
+}
+
+#notification-box > button {
+    width: 100px;
+    height: 50px;
+    border: 1px solid black;
+    background-color: white;
+}

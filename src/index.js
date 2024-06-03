@@ -17,6 +17,8 @@ const inputNick = document.getElementById('inputNick');
 const submitNickButton = document.getElementById('submitNickButton');
 const inputContent = document.getElementById('inputContent');
 const sendButton = document.getElementById('sendButton');
+const notificationContainer = document.getElementById('notification-container');
+const notificationButton = document.getElementById('notification-button');
 
 let id = -1;
 let nick = '없음';
@@ -83,10 +85,31 @@ function enterNick() {
         nick = nick.substring(0, 3) + '..';
     };
 
-    nickContainer.style.display = 'none';
-    chatContainer.style.display = 'flex';
-    
-    connect();
+    if(client) client.destroy();
+    client = new net.Socket();
+
+    client.connect(serverPort, serverHost, () => {
+        
+        client.write(JSON.stringify(new Chat(-1, nick, '닉네임 중복 체크', Chat.INFO_TYPE.checkDuplicatedNick, serverPort, serverHost)));
+
+        client.on('data', (data) => {
+            if(data.toString() === 'true'){
+                notificationContainer.style.display = 'block';
+                notificationButton.addEventListener('click', () => {
+                    notificationContainer.style.display = 'none';
+                }, { once: true });            
+            } else {
+                client.destroy();
+
+                nickContainer.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                
+                connect();
+            }
+        });
+
+        // 어쨌든 서버와 연결해서 닉네임을 체크하지만 채팅 소켓이 연결된 건 아니므로 소켓 close 처리는 생략.
+    })
 }
 
 // 유효성 검사.
@@ -162,7 +185,8 @@ function setValidation(element, message, input, isValid){
 function connect() {
     console.log('connecting..');
 
-    if(client) client.destroy();
+    // 서버 재시작 시 새로운 소켓을 할당하기 전, 그 전 소켓 메모리 할당 해제.
+    if(client) client.destroy();    
     client =  new net.Socket();
 
     client.on('error', (error) => {
@@ -271,4 +295,3 @@ function addMessageList(id, data) {
     messages.push(data);
     render(id, data, document);
 }
-
