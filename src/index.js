@@ -296,7 +296,7 @@ function sendMessage(id) {
     client.write(json_chat);
     inputContent.value = "";
 
-    console.log('서버로 보낸 메시지-', json_chat);
+    console.log('서버로 보낸 메시지-', obj_chat);
 }
 
 // 메시지 목록에 추가 및 렌더링.
