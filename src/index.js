@@ -18,6 +18,7 @@ const submitNickButton = document.getElementById('submitNickButton');
 const inputContent = document.getElementById('inputContent');
 const sendButton = document.getElementById('sendButton');
 const notificationContainer = document.getElementById('notification-container');
+const notificationMessage = document.getElementById('notification-message');
 const notificationButton = document.getElementById('notification-button');
 
 let id = -1;
@@ -88,16 +89,18 @@ function enterNick() {
     if(client) client.destroy();
     client = new net.Socket();
 
+    client.on('error', (error) => {
+        console.error(error);
+        showAlert('서버와 연결에 실패했습니다.');
+    });
+
     client.connect(serverPort, serverHost, () => {
         // 서버 측은 on 메서드를 한 곳에서 처리하므로 규약에 맞게 Chat 객체 생성해서 보내기.
         client.write(JSON.stringify(new Chat(-1, nick, '닉네임 중복 체크', Chat.INFO_TYPE.checkDuplicatedNick, serverPort, serverHost)));
 
         client.on('data', (data) => {
             if(data.toString() === 'true'){
-                notificationContainer.style.display = 'block';
-                notificationButton.addEventListener('click', () => {
-                    notificationContainer.style.display = 'none';
-                }, { once: true });
+                showAlert('이미 사용 중인 닉네임입니다.');
             } else {
                 client.destroy();
 
@@ -191,7 +194,7 @@ function connect() {
 
     client.on('error', (error) => {
         console.error(error);
-        alert('연결 실패');
+        showAlert('서버와 연결에 실패했습니다.');
     });
 
     // 앱을 실행하면 바로 연결. 로그인 기능 생략.
@@ -294,4 +297,13 @@ function sendMessage(id) {
 function addMessageList(id, data) {
     messages.push(data);
     render(id, data, document);
+}
+
+// 개인 유저에게 상태 알림. alert 대신 이용.
+function showAlert(message) {
+    notificationContainer.style.display = 'block';
+    notificationMessage.innerText = message;
+    notificationButton.addEventListener('click', () => {
+        notificationContainer.style.display = 'none';
+    }, { once: true });
 }

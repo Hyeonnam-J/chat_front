@@ -157,11 +157,11 @@
     gap: 30px;
 }
 
-#notification-box > h3 {
+#notification-message {
     font-size: 1.5rem;
 }
 
-#notification-box > button {
+#notification-button {
     width: 100px;
     height: 50px;
     border: 1px solid black;
