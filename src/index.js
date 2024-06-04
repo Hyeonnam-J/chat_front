@@ -26,7 +26,7 @@ let nick = '없음';
 let clientHost, clientPort, serverHost, serverPort;
 let isHostValid, isPortValid = false;
 const messages = [];    // DB 저장 용도?
-let client;
+let client; // 소켓.
 
 const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 const domainRegex = /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
@@ -90,15 +90,19 @@ function enterNick() {
     client = new net.Socket();
 
     client.on('error', (error) => {
-        console.error(error);
+        console.error('닉네임 입력 중 에러-', error);
         showAlert('서버와 연결에 실패했습니다.');
     });
 
     client.connect(serverPort, serverHost, () => {
         // 서버 측은 on 메서드를 한 곳에서 처리하므로 규약에 맞게 Chat 객체 생성해서 보내기.
-        client.write(JSON.stringify(new Chat(-1, nick, '닉네임 중복 체크', Chat.INFO_TYPE.checkDuplicatedNick, serverPort, serverHost)));
+        const reqDupliNickChat = new Chat(-1, nick, '닉네임 중복체크', Chat.INFO_TYPE.checkDuplicatedNick, serverPort, serverHost);
+        client.write(JSON.stringify(reqDupliNickChat));
+        console.log('닉네임 중복체크 요청-', reqDupliNickChat);
 
         client.on('data', (data) => {
+            console.log('닉네임 중복체크 요청의 답-', data.toString());
+
             if(data.toString() === 'true'){
                 showAlert('이미 사용 중인 닉네임입니다.');
             } else {
@@ -193,7 +197,7 @@ function connect() {
     client =  new net.Socket();
 
     client.on('error', (error) => {
-        console.error(error);
+        console.error('서버와 채팅 소켓 연결 중 에러-', error);
         showAlert('서버와 연결에 실패했습니다.');
     });
 
@@ -201,11 +205,13 @@ function connect() {
     client.connect(serverPort, serverHost, () => {
         // 연결되고 나서 내 아이디가 -1이면 서버로부터 아이디 발급 과정 진행.
         if(id === -1){
-            const requestChat = new Chat(id, nick, '소켓 정보랑 아이디 주세요.', Chat.INFO_TYPE.requestClientSocketInfoWithId, serverPort, serverHost);
-            client.write(JSON.stringify(requestChat));
+            const requestIdAndSocketInfoChat = new Chat(id, nick, '소켓 정보랑 아이디 주세요.', Chat.INFO_TYPE.requestClientSocketInfoWithId, serverPort, serverHost);
+            client.write(JSON.stringify(requestIdAndSocketInfoChat));
+            console.log('소켓 정보와 아이디 요청-', requestIdAndSocketInfoChat);
         } else {
-            const requestChat = new Chat(id, nick, '소켓 정보만 주세요.', Chat.INFO_TYPE.requestClientSocketInfo, serverPort, serverHost);
-            client.write(JSON.stringify(requestChat));
+            const requestSocketInfoChat = new Chat(id, nick, '소켓 정보만 주세요.', Chat.INFO_TYPE.requestClientSocketInfo, serverPort, serverHost);
+            client.write(JSON.stringify(requestSocketInfoChat));
+            console.log('소켓 정보 요청-', requestSocketInfoChat);
         }
 
         client.on('data', (data) => {
@@ -214,7 +220,7 @@ function connect() {
             arr_data = arr_data.map(d => {
                 return JSON.parse('{' + d);
             });
-            console.log('서버로부터 받은 arr_data : ', arr_data);
+            console.log('서버로부터 받은 데이터 배열 : ', arr_data);
 
             arr_data.forEach(d => {
                 if (d.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
@@ -226,12 +232,12 @@ function connect() {
                     // 자신의 net 정보 저장.
                     clientHost = d.destinationHost;
                     clientPort = d.destinationPort;
-                    console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
+                    console.log('클라이언트 net 정보, Host: ', clientHost, ' Port: ', clientPort);
                 } else if(d.infoType === Chat.INFO_TYPE.responseClientSocketInfo){
                     // 자신의 net 정보 저장.
                     clientHost = d.destinationHost;
                     clientPort = d.destinationPort;
-                    console.log('내 net 정보 저장, Host: ', clientHost, ' Port: ', clientPort);
+                    console.log('클라이언트 net 정보, Host: ', clientHost, ' Port: ', clientPort);
 
                     // 서버 알림으로 바꿈.
                     d.infoType = Chat.INFO_TYPE.inform;
@@ -241,7 +247,7 @@ function connect() {
                     addMessageList(id, d);
                 }
 
-                console.log('메시지 수: ', messages.length);
+                // console.log('메시지 수: ', messages.length);
             });
         });
 
@@ -257,15 +263,15 @@ function connect() {
 
         // close -> 소켓이 완전히 닫힐 때 발생.
         client.on('close', () => {
-            console.log('서버와의 연결이 끊겼습니다');
+            console.log('서버와의 연결이 끊김.');
 
             const disconnectAlarm = new Chat(id, nick, '서버와의 연결이 끊겼습니다 !', Chat.INFO_TYPE.inform, client.remotePort, client.remoteAddress);
             addMessageList(id, disconnectAlarm);
-            console.log('메시지 수: ', messages.length);
+            // console.log('메시지 수: ', messages.length);
 
             // 서버 재시작 알림용.
             const temp_server = net.createServer(Socket => {
-                console.log('서버 연락 옴!');
+                console.log('서버 측에서 재연결 요청...');
                 connect();
 
                 // 서버에서 연락오면 역할이 끝난 임시 서버는 종료.
@@ -278,7 +284,7 @@ function connect() {
         });
     });
 
-    console.log('confirm connect() exit...');
+    // console.log('confirm connect() exit...');
 }
 
 // 서버로 메시지 전송
@@ -290,7 +296,7 @@ function sendMessage(id) {
     client.write(json_chat);
     inputContent.value = "";
 
-    console.log('sendMessage: ', json_chat);
+    console.log('서버로 보낸 메시지-', json_chat);
 }
 
 // 메시지 목록에 추가 및 렌더링.
