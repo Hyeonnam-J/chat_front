@@ -4,6 +4,7 @@ const net = require('net');
 
 const Chat = require('./js/chat');
 const { render } = require('./js/rendering');
+const { executeExceptionHandler } = require('./js/handler.js');
 
 const connectionContainer = document.getElementById('connection-container');
 const inputHost = document.getElementById('inputHost');
@@ -313,3 +314,6 @@ function showAlert(message) {
         notificationContainer.style.display = 'none';
     }, { once: true });
 }
+
+// exception 처리.
+executeExceptionHandler();
