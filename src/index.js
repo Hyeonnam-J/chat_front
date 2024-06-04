@@ -224,7 +224,9 @@ function connect() {
             console.log('서버로부터 받은 데이터 배열 : ', arr_data);
 
             arr_data.forEach(d => {
-                if (d.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
+                if(d.infoType === Chat.INFO_TYPE.message || d.infoType === Chat.INFO_TYPE.inform){
+                    addMessageList(id, d);
+                } else if (d.infoType === Chat.INFO_TYPE.responseClientSocketInfoWithId) {
                     // 나 입장 시, 메시지 목록에 추가하지 않고, 아이디 발급 로직.
                     // 서버가 접속한 소켓에게만 단독으로 보낸 메시지.
                     id = d.id;
@@ -242,9 +244,6 @@ function connect() {
 
                     // 서버 알림으로 바꿈.
                     d.infoType = Chat.INFO_TYPE.inform;
-                    addMessageList(id, d);
-                } else {
-                    // 그 외의 경우는 모두 메시지 목록에 저장.
                     addMessageList(id, d);
                 }
 

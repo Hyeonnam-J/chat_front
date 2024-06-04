@@ -11,7 +11,7 @@ const executeExceptionHandler = function(){
 
     process.on('warning', e => {
         console.warn('warning: ', e);
-    })
+    });
 }
 
 module.exports = { executeExceptionHandler };
